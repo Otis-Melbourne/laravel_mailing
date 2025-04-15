@@ -10,21 +10,14 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements JWTSubject
 {
 
-    protected static function booted(): void
-    {
-        static::created(function (User $user) {
-            Mail::to($user->email)->send(new Registration($user));
-        });
-    }
+    use HasFactory, Notifiable, HasApiTokens, HasRoles ;
 
-
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
-
+    
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -34,6 +27,19 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+
+    
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            Mail::to($user->email)->send(new Registration($user));
+        });
+    }
+
+
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+
 
     /**
      * The attributes that are mass assignable.
