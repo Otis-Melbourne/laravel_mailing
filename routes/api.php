@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\JwtAuthController;
+use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,13 @@ Route::group(['prefix' => "auth"], function(){
     Route::post('logout', [JwtAuthController::class, 'logout'])->middleware('jwtauthmiddleware');
     
 });
+
+
+Route::group(['middleware' => "jwtauthmiddleware"], function(){
+
+    Route::resource('posts', PostController::class)->except(['create', 'edit']);
+    
+});
+
+
+
