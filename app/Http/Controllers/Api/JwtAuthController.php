@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
+use App\Mail\Registration;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Mail;
 
 class JwtAuthController extends Controller
 {
@@ -36,6 +38,8 @@ class JwtAuthController extends Controller
 
         $token = JWTAuth::fromUser($user);
 
+        Mail::to($user->email)->send(new Registration($user));
+        
         return response()->json([
             'statusCode' => 201,
             'user' => $user,
