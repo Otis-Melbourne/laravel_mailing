@@ -37,8 +37,6 @@ class JwtAuthController extends Controller
         ]);
 
         $token = JWTAuth::fromUser($user);
-
-        Mail::to($user->email)->send(new Registration($user));
         
         return response()->json([
             'statusCode' => 201,
