@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostDeletionEvent;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
 use App\Mail\PostCreation;
+use App\Notifications\PostDeletionNotification;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +20,8 @@ class PostController extends Controller
      */
     public function index(){
         
-        $posts = Post::get();
+        $posts = Post::where('user_id', auth()->user()->id)->get();
+
         return response()->json([
             'statusCode' => 200,
             'data' => [
@@ -70,6 +73,7 @@ class PostController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Post $post){
+        Gate::authorize('update', $post);
         $validator = Validator::make($request->all(), [
             'name' => "required|string|unique:posts,name,".$post->id,
         ]);
@@ -96,6 +100,14 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+
+        Gate::authorize('delete', $post);
+        $post->delete();
+        $user = auth()->user();
+        PostDeletionEvent::dispatch($user);
+        return response()->json([
+            'statusCode' => 200,
+            'data' => 'post deleted successfully',
+        ], 200);
     }
 }
