@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\PostResource;
 use App\Mail\PostCreation;
 use App\Notifications\PostDeletionNotification;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -19,8 +20,23 @@ class PostController extends Controller
      * Display a listing of the resource.
      */
     public function index(){
-        
-        $posts = Post::where('user_id', auth()->user()->id)->get();
+
+        // if(Cache::has('posts')){
+        //     $posts = Cache::get('posts');
+        // }else{
+        //     Cache::put('posts', Post::get(), 10);
+        //     $posts = Cache::get('posts');
+        // }
+
+
+        // $posts = Cache::remember('posts', 10, function(){
+        //     return Post::get();
+        // } );
+
+        $posts = Cache::flexible('posts', [5, 10], function(){
+            return Post::get();
+        } );
+
 
         return response()->json([
             'statusCode' => 200,
