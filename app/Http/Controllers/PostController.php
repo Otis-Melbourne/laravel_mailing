@@ -29,14 +29,14 @@ class PostController extends Controller
         // }
 
 
-        // $posts = Cache::remember('posts', 10, function(){
-        //     return Post::get();
-        // } );
-
-        $posts = Cache::flexible('posts', [5, 10], function(){
+        $posts = Cache::remember('posts', 10, function(){
+            sleep(2);
             return Post::get();
         } );
 
+        // $posts = Cache::flexible('posts', [5, 10], function(){
+        //     return Post::get();
+        // } );
 
         return response()->json([
             'statusCode' => 200,
