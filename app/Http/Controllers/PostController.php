@@ -30,7 +30,6 @@ class PostController extends Controller
 
 
         $posts = Cache::remember('posts', 10, function(){
-            sleep(2);
             return Post::get();
         } );
 
