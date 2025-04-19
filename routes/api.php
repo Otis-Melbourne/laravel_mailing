@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\JwtAuthController;
 use App\Http\Controllers\PostController;
+use App\Jobs\TranslateJob;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
